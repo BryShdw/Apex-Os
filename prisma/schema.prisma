@@ -1,0 +1,385 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum TipoTransaccion {
+  INGRESO
+  GASTO
+}
+
+enum MetodoPago {
+  YAPE_PLIN
+  EFECTIVO
+  TRANSFERENCIA
+  TARJETA_DEBITO
+}
+
+enum TipoCategoria {
+  FIJO
+  VARIABLE
+  AHORRO_INVERSION
+  INGRESO
+}
+
+enum CategoriaMeta {
+  FINANZAS
+  FITNESS
+  POSTURA
+  SKINCARE
+  CARRERA
+  DIBUJO
+}
+
+enum HorizonteMeta {
+  CORTO_1_3M
+  MEDIANO_3_6M
+  LARGO_1_3A
+}
+
+enum EstadoMeta {
+  PENDIENTE
+  EN_PROGRESO
+  COMPLETADA
+  PAUSADA
+}
+
+enum GrupoMuscular {
+  ESPALDA_BICEPS
+  PECHO_TRICEPS
+  PIERNA
+  CORE
+  POSTURA_CUELLO
+}
+
+enum DiaSemana {
+  LUNES
+  MARTES
+  MIERCOLES
+  JUEVES
+  VIERNES
+  SABADO
+  DOMINGO
+}
+
+enum ModuloIA {
+  FINANZAS
+  FITNESS
+  HABITOS_SUENO
+  METAS
+  DIBUJO
+}
+
+model Usuario {
+  id                   Int       @id @default(autoincrement())
+  nombre               String    @default("Brayan") @db.VarChar(50)
+  alias                String?   @default("Bry") @db.VarChar(50)
+  edad                 Int       @default(22)
+  pesoActualKg         Decimal   @default(70.00) @map("peso_actual_kg") @db.Decimal(5, 2)
+  pesoMetaKg           Decimal   @default(75.50) @map("peso_meta_kg") @db.Decimal(5, 2)
+  estaturaCm           Int       @default(180) @map("estatura_cm")
+  porcentajeGrasa      Decimal   @default(15.5) @map("porcentaje_grasa") @db.Decimal(4, 2)
+  sueldoBase           Decimal   @default(1500.00) @map("sueldo_base") @db.Decimal(10, 2)
+  dineroActualCaja     Decimal   @default(0.00) @map("dinero_actual_caja") @db.Decimal(10, 2)
+  ahorroBlindado       Decimal   @default(0.00) @map("ahorro_blindado") @db.Decimal(10, 2)
+  metaHorasSueno       Decimal   @default(7.0) @map("meta_horas_sueno") @db.Decimal(3, 1)
+  
+  // Datos del Perfil Global migrados desde Markdown
+  ocupacion            String?   @map("ocupacion") @db.VarChar(200)
+  horarioLaboral       String?   @map("horario_laboral") @db.VarChar(120)
+  tipoPiel             String?   @map("tipo_piel") @db.VarChar(120)
+  tipoCabello          String?   @map("tipo_cabello") @db.VarChar(120)
+  velloFacial          String?   @map("vello_facial") @db.VarChar(120)
+  posturaDetalle       String?   @map("postura_detalle") @db.Text
+  digestion            String?   @map("digestion") @db.VarChar(120)
+  filosofia            String?   @map("filosofia") @db.Text
+  antiMetas            String?   @map("anti_metas") @db.Text
+
+  creadoEn             DateTime  @default(now()) @map("creado_en")
+  actualizadoEn        DateTime  @updatedAt @map("actualizado_en")
+
+  metas                Meta[]
+  presupuestos         PresupuestoMensual[]
+  entrenamientos       RegistroEntrenamiento[]
+  habitos              RegistroHabitoDiario[]
+  insights             InsightIA[]
+  diagnosticos         DiagnosticoInicial[]
+  horarioBloques       HorarioBloque[]
+  productosSkincare    ProductoSkincare[]
+  ideasDibujo          IdeaDibujo[]
+  practicasDibujo      PracticaDibujo[]
+
+  @@map("usuarios")
+}
+
+model DiagnosticoInicial {
+  id                   Int       @id @default(autoincrement())
+  usuarioId            Int       @default(1) @map("usuario_id")
+  numeroTest           Int       @map("numero_test")
+  codigo               String    @unique @db.VarChar(60)
+  titulo               String    @db.VarChar(150)
+  categoria            String    @db.VarChar(50)
+  respuestasJson       Json      @map("respuestas_json")
+  resumen              String?   @db.Text
+  actualizadoEn        DateTime  @updatedAt @map("actualizado_en")
+
+  usuario              Usuario   @relation(fields: [usuarioId], references: [id])
+
+  @@map("diagnosticos_iniciales")
+}
+
+model HorarioBloque {
+  id                   Int       @id @default(autoincrement())
+  usuarioId            Int       @default(1) @map("usuario_id")
+  diaSemana            DiaSemana @map("dia_semana")
+  franjaHoraria        String    @map("franja_horaria") @db.VarChar(50)
+  actividad            String    @db.VarChar(200)
+  tipoDia              String    @map("tipo_dia") @db.VarChar(20) // TIPO_A, TIPO_B, SABADO, DOMINGO
+  categoria            String    @default("GENERAL") @db.VarChar(50)
+
+  usuario              Usuario   @relation(fields: [usuarioId], references: [id])
+
+  @@map("horarios_bloques")
+}
+
+model ProductoSkincare {
+  id                   Int       @id @default(autoincrement())
+  usuarioId            Int       @default(1) @map("usuario_id")
+  nombre               String    @db.VarChar(120)
+  marca                String?   @db.VarChar(60)
+  pasoNumero           Int       @default(1) @map("paso_numero")
+  momento              String    @default("AM_PM") @db.VarChar(20) // AM, PM, AM_PM
+  categoria            String    @default("HIDRATANTE") @db.VarChar(50) // LIMPIADOR, HIDRATANTE, PROTECTOR_SOLAR, REPARADOR_BARRERA, ACTIVO_TRATAMIENTO, CORPORAL
+  enUso                Boolean   @default(true) @map("en_uso")
+  precio               Decimal?  @db.Decimal(10, 2)
+  instrucciones        String?   @db.Text
+  notas                String?   @db.Text
+  creadoEn             DateTime  @default(now()) @map("creado_en")
+
+  usuario              Usuario   @relation(fields: [usuarioId], references: [id])
+
+  @@map("productos_skincare")
+}
+
+model IdeaDibujo {
+  id                   Int       @id @default(autoincrement())
+  usuarioId            Int       @default(1) @map("usuario_id")
+  titulo               String    @db.VarChar(150)
+  categoria            String    @default("ANATOMIA") @db.VarChar(50) // ANATOMIA, MANOS, GESTO, PERSPECTIVA, PERSONAJES_MANHWA, SOMBREADO_ILUMINACION
+  descripcion          String?   @db.Text
+  referenciaUrl        String?   @map("referencia_url") @db.VarChar(255)
+  dificultad           String    @default("MEDIO") @db.VarChar(20) // FACIL, MEDIO, AVANZADO
+  completada           Boolean   @default(false)
+  fechaCreacion        DateTime  @default(now()) @map("fecha_creacion")
+
+  usuario              Usuario   @relation(fields: [usuarioId], references: [id])
+
+  @@map("ideas_dibujo")
+}
+
+model PracticaDibujo {
+  id                   Int       @id @default(autoincrement())
+  usuarioId            Int       @default(1) @map("usuario_id")
+  fecha                DateTime  @default(now())
+  minutos              Int       @default(30)
+  enfoque              String    @db.VarChar(100)
+  calificacion         Int       @default(7) // 1 al 10
+  notas                String?   @db.Text
+
+  usuario              Usuario   @relation(fields: [usuarioId], references: [id])
+
+  @@map("practicas_dibujo")
+}
+
+model PresupuestoMensual {
+  id                   Int           @id @default(autoincrement())
+  usuarioId            Int           @default(1) @map("usuario_id")
+  anio                 Int
+  mes                  Int           // 1 - 12
+  ingresoTotal         Decimal       @default(1500.00) @map("ingreso_total") @db.Decimal(10, 2)
+  fijoApoyoCasa        Decimal       @default(500.00) @map("fijo_apoyo_casa") @db.Decimal(10, 2)
+  fijoMovil            Decimal       @default(28.00) @map("fijo_movil") @db.Decimal(10, 2)
+  fijoTransporte       Decimal       @default(120.00) @map("fijo_transporte") @db.Decimal(10, 2)
+  metaAhorroMes        Decimal       @default(200.00) @map("meta_ahorro_mes") @db.Decimal(10, 2)
+  presupuestoVariableMax Decimal     @default(652.00) @map("presupuesto_variable_max") @db.Decimal(10, 2)
+  cerrado              Boolean       @default(false)
+  creadoEn             DateTime      @default(now()) @map("creado_en")
+  actualizadoEn        DateTime      @updatedAt @map("actualizado_en")
+
+  usuario              Usuario       @relation(fields: [usuarioId], references: [id])
+  transacciones        Transaccion[]
+
+  @@unique([anio, mes], name: "uk_anio_mes")
+  @@map("presupuestos_mensuales")
+}
+
+model CategoriaFinanzas {
+  id                   Int           @id @default(autoincrement())
+  nombre               String        @db.VarChar(60)
+  tipo                 TipoCategoria @default(VARIABLE)
+  esGastoHormiga       Boolean       @default(false) @map("es_gasto_hormiga")
+  esComidaDiaria       Boolean       @default(false) @map("es_comida_diaria")
+  esSalidaOcio         Boolean       @default(false) @map("es_salida_ocio")
+  esAporteHogar        Boolean       @default(false) @map("es_aporte_hogar")
+  esModuloAhorro       Boolean       @default(false) @map("es_modulo_ahorro")
+  colorHex             String        @default("#06b6d4") @map("color_hex") @db.VarChar(10)
+  icono                String        @default("wallet") @db.VarChar(30)
+  presupuestoEstimado  Decimal?      @map("presupuesto_estimado") @db.Decimal(10, 2)
+
+  transacciones        Transaccion[]
+
+  @@map("categorias_finanzas")
+}
+
+model Transaccion {
+  id                   Int               @id @default(autoincrement())
+  presupuestoId        Int               @map("presupuesto_id")
+  categoriaId          Int               @map("categoria_id")
+  tipo                 TipoTransaccion   @default(GASTO)
+  monto                Decimal           @db.Decimal(10, 2)
+  fecha                DateTime          @default(now())
+  descripcion          String            @db.VarChar(255)
+  metodoPago           MetodoPago        @default(YAPE_PLIN) @map("metodo_pago")
+  esGastoHormiga       Boolean           @default(false) @map("es_gasto_hormiga")
+  creadoEn             DateTime          @default(now()) @map("creado_en")
+
+  presupuesto          PresupuestoMensual @relation(fields: [presupuestoId], references: [id], onDelete: Cascade)
+  categoria            CategoriaFinanzas  @relation(fields: [categoriaId], references: [id])
+  aporteMeta           AporteMeta?
+
+  @@index([fecha])
+  @@map("transacciones")
+}
+
+model Meta {
+  id                   Int           @id @default(autoincrement())
+  usuarioId            Int           @default(1) @map("usuario_id")
+  titulo               String        @db.VarChar(120)
+  descripcion          String?       @db.Text
+  categoria            CategoriaMeta @default(FINANZAS)
+  horizonte            HorizonteMeta @default(CORTO_1_3M)
+  montoObjetivo        Decimal?      @map("monto_objetivo") @db.Decimal(10, 2)
+  montoAcumulado       Decimal       @default(0.00) @map("monto_acumulado") @db.Decimal(10, 2)
+  fechaLimite          DateTime?     @map("fecha_limite")
+  estado               EstadoMeta    @default(EN_PROGRESO)
+  prioridad            Int           @default(1)
+  creadoEn             DateTime      @default(now()) @map("creado_en")
+  actualizadoEn        DateTime      @updatedAt @map("actualizado_en")
+
+  usuario              Usuario       @relation(fields: [usuarioId], references: [id])
+  aportes              AporteMeta[]
+
+  @@map("metas")
+}
+
+model AporteMeta {
+  id                   Int           @id @default(autoincrement())
+  metaId               Int           @map("meta_id")
+  transaccionId        Int?          @unique @map("transaccion_id")
+  monto                Decimal       @db.Decimal(10, 2)
+  fecha                DateTime      @default(now())
+  nota                 String?       @db.VarChar(255)
+
+  meta                 Meta          @relation(fields: [metaId], references: [id], onDelete: Cascade)
+  transaccion          Transaccion?  @relation(fields: [transaccionId], references: [id], onDelete: SetNull)
+
+  @@map("aportes_metas")
+}
+
+model EjercicioCatalogo {
+  id                   Int               @id @default(autoincrement())
+  nombre               String            @db.VarChar(100)
+  grupoMuscular        GrupoMuscular     @map("grupo_muscular")
+  descripcionTecnica   String?           @map("descripcion_tecnica") @db.Text
+  esPostural           Boolean           @default(false) @map("es_postural")
+  videoOUrl            String?           @map("video_o_url") @db.VarChar(255)
+
+  series               SerieEntrenamiento[]
+
+  @@map("ejercicios_catalogo")
+}
+
+model RutinaEjercicio {
+  id                   Int               @id @default(autoincrement())
+  codigo               String            @unique @db.VarChar(40)
+  nombre               String            @db.VarChar(120)
+  diaSugerido          DiaSemana         @map("dia_sugerido")
+  esDiaTipoB           Boolean           @default(true) @map("es_dia_tipo_b")
+  descripcion          String?           @db.Text
+
+  entrenamientos       RegistroEntrenamiento[]
+
+  @@map("rutinas_ejercicio")
+}
+
+model RegistroEntrenamiento {
+  id                   Int               @id @default(autoincrement())
+  usuarioId            Int               @default(1) @map("usuario_id")
+  rutinaId             Int               @map("rutina_id")
+  fecha                DateTime          @default(now())
+  duracionMinutos      Int               @default(45) @map("duracion_minutos")
+  rpeEsfuerzoGeneral   Int               @default(7) @map("rpe_esfuerzo_general") // 1 al 10
+  molestiaCuello       Int               @default(0) @map("molestia_cuello") // 0 al 10
+  comentarios          String?           @db.Text
+  creadoEn             DateTime          @default(now()) @map("creado_en")
+
+  usuario              Usuario           @relation(fields: [usuarioId], references: [id])
+  rutina               RutinaEjercicio   @relation(fields: [rutinaId], references: [id])
+  series               SerieEntrenamiento[]
+
+  @@map("registros_entrenamiento")
+}
+
+model SerieEntrenamiento {
+  id                   Int                  @id @default(autoincrement())
+  registroId           Int                  @map("registro_id")
+  ejercicioId          Int                  @map("ejercicio_id")
+  numeroSerie          Int                  @map("numero_serie")
+  repeticiones         Int
+  pesoLastreKg         Decimal              @default(0.00) @map("peso_lastre_kg") @db.Decimal(5, 2)
+  rpeSerie             Int?                 @map("rpe_serie")
+  falloMuscular        Boolean              @default(false) @map("fallo_muscular")
+
+  registro             RegistroEntrenamiento @relation(fields: [registroId], references: [id], onDelete: Cascade)
+  ejercicio            EjercicioCatalogo     @relation(fields: [ejercicioId], references: [id])
+
+  @@map("series_entrenamiento")
+}
+
+model RegistroHabitoDiario {
+  id                   Int               @id @default(autoincrement())
+  usuarioId            Int               @default(1) @map("usuario_id")
+  fecha                DateTime          @unique @db.Date
+  litrosAgua           Decimal           @default(0.0) @map("litros_agua") @db.Decimal(3, 1)
+  skincareAm           Boolean           @default(false) @map("skincare_am")
+  skincarePm           Boolean           @default(false) @map("skincare_pm")
+  horasSueno           Decimal           @default(0.0) @map("horas_sueno") @db.Decimal(3, 1)
+  calidadSueno         Int?              @map("calidad_sueno") // 1 - 10
+  pausasPostura        Int               @default(0) @map("pausas_postura")
+  minutosRedes         Int               @default(0) @map("minutos_redes")
+  notas                String?           @db.Text
+  creadoEn             DateTime          @default(now()) @map("creado_en")
+  actualizadoEn        DateTime          @updatedAt @map("actualizado_en")
+
+  usuario              Usuario           @relation(fields: [usuarioId], references: [id])
+
+  @@map("registros_habitos_diarios")
+}
+
+model InsightIA {
+  id                   Int               @id @default(autoincrement())
+  usuarioId            Int               @default(1) @map("usuario_id")
+  modulo               ModuloIA
+  diagnostico          String            @db.Text
+  recomendacionesJson  Json              @map("recomendaciones_json")
+  fechaGeneracion      DateTime          @default(now()) @map("fecha_generacion")
+  aplicado             Boolean           @default(false)
+
+  usuario              Usuario           @relation(fields: [usuarioId], references: [id])
+
+  @@map("insights_ia")
+}

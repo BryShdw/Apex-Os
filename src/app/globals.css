@@ -1,26 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 @import "tailwindcss";
 
+@theme {
+  --color-ss-bg: #15181e;
+  --color-ss-light: #1b1f28;
+  --color-ss-dark: #0f1115;
+  --color-ss-cyan: #06b6d4;
+  --color-ss-silver: #e2e8f0;
+  --color-ss-crimson: #dc2626;
+  --color-ss-gold: #f59e0b;
+  --color-ss-void: #090a0c;
+  --color-ss-purple: #8b5cf6;
+
+  --font-serif: 'Cinzel', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: 'Inter', sans-serif;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #15181e;
+  --foreground: #e2e8f0;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #15181e;
+  color: #e2e8f0;
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* --- Reglas Maestras de Dark Neumorphism (Shadow Slave) --- */
+
+/* Extrusión estándar (Tarjetas, Widgets) */
+.ss-card {
+  background: #15181e;
+  border-radius: 1rem;
+  box-shadow: 6px 6px 14px #0f1115, -6px -6px 14px #1b1f28;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  transition: all 0.25s ease-in-out;
+}
+
+.ss-card:hover {
+  box-shadow: 8px 8px 18px #0f1115, -8px -8px 18px #1b1f28;
+}
+
+/* Hendidura (Inputs, Barras de Progreso, Contenedores Inset) */
+.ss-inset {
+  background: #121419;
+  box-shadow: inset 4px 4px 8px #0f1115, inset -4px -4px 8px #1b1f28;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+/* Botones Neumórficos */
+.ss-btn {
+  background: #15181e;
+  box-shadow: 5px 5px 12px #0f1115, -5px -5px 12px #1b1f28;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.ss-btn:hover {
+  box-shadow: 6px 6px 14px #0f1115, -6px -6px 14px #1b1f28;
+  transform: translateY(-1px);
+}
+
+.ss-btn:active {
+  box-shadow: inset 3px 3px 6px #0f1115, inset -3px -3px 6px #1b1f28;
+  transform: translateY(1px);
+}
+
+/* Botón Activo / Presionado sostenido */
+.ss-btn-active {
+  background: #121419;
+  box-shadow: inset 4px 4px 8px #0f1115, inset -4px -4px 8px #1b1f28;
+  border-color: rgba(6, 182, 212, 0.4);
+  color: #06b6d4;
+}
+
+/* Resplandores Místicos (Essence Glow) */
+.ss-glow-cyan {
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.35);
+}
+
+.ss-glow-gold {
+  box-shadow: 0 0 18px rgba(245, 158, 11, 0.35);
+}
+
+.ss-glow-crimson {
+  box-shadow: 0 0 16px rgba(220, 38, 38, 0.4);
+}
+
+.ss-glow-purple {
+  box-shadow: 0 0 16px rgba(139, 92, 246, 0.35);
+}
+
+/* Fuentes auxiliares */
+.font-runic {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.04em;
+}
+
+.font-spell {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0f1115;
+}
+::-webkit-scrollbar-thumb {
+  background: #1b1f28;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #06b6d4;
 }
