@@ -37,6 +37,10 @@ $process.WaitForExit()
 
 [System.IO.File]::WriteAllText($backupFile, $output, [System.Text.Encoding]::UTF8)
 
+# Mantener copia fija para control de versiones y restauración post-formateo
+$rootBackup = "$PSScriptRoot\database_backup.sql"
+[System.IO.File]::WriteAllText($rootBackup, $output, [System.Text.Encoding]::UTF8)
+
 if (Test-Path $backupFile) {
     $size = (Get-Item $backupFile).Length / 1KB
     Write-Host ""

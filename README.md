@@ -92,9 +92,9 @@ $$\text{Daily Safe Spend} = \frac{\text{Margen Variable Mensual} - \text{Gastos 
 
 ---
 
-## ⚡ 5. Control de Encendido, Apagado y Respaldo (1 Clic)
+## ⚡ 5. Control de Encendido, Apagado, Respaldo y Restauración (1 Clic)
 
-En tu **Escritorio de Windows** (`C:\Users\braya\Desktop`) y en la raíz del proyecto dispones de 3 lanzadores ultrarrobustos inmunes a problemas de caracteres o rutas:
+En tu **Escritorio de Windows** (`C:\Users\braya\Desktop`) y en la raíz del proyecto dispones de lanzadores ultrarrobustos:
 
 ### 1. `Iniciar_ApexOS.bat` (Encender Sistema)
 - Arranca en modo silencioso y seguro a través de PowerShell.
@@ -109,8 +109,17 @@ En tu **Escritorio de Windows** (`C:\Users\braya\Desktop`) y en la raíz del pro
 - Tu base de datos MySQL permanece intacta y segura.
 
 ### 3. `Backup_ApexOS.bat` (Copia de Seguridad Automatizada)
-- Ejecuta una exportación instantánea con `mysqldump` directo a `apex-os/backups/backup_YYYY-MM-DD_HH-mm-ss.sql`.
-- Protege todos tus registros de peso, ejercicios, transacciones e insights en segundos.
+- Ejecuta una exportación instantánea con `mysqldump` directo a `apex-os/backups/backup_YYYY-MM-DD_HH-mm-ss.sql` y actualiza `database_backup.sql`.
+- Protege todos tus registros de saldo real, ahorro blindado, ejercicios, series y metas en segundos.
+
+### 4. `Restaurar_Backup.bat` (Restauración Tras Formateo de PC)
+- **Si vas a formatear tu PC**: El archivo `database_backup.sql` contiene todos tus datos guardados en el repositorio.
+- **Tras formatear e instalar Node.js y MySQL Server 8.0**:
+  1. Clona el repositorio: `git clone https://github.com/BryShdw/Apex-Os.git`
+  2. Entra a la carpeta y crea tu `.env` a partir de `.env.example`.
+  3. Ejecuta `npm install`.
+  4. Haz doble clic en **`Restaurar_Backup.bat`** (o corre `mysql -u root -proot apex_personal_os < database_backup.sql`).
+  5. ¡Listo! Todo tu historial, dinero en caja, ahorro blindado intocable y rutinas estarán 100% restablecidos.
 
 ---
 

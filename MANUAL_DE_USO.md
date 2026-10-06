@@ -212,4 +212,19 @@ Accede desde el menú a **Oráculo IA** (`/oraculo`):
 
 ---
 
+## 10. 💾 Copias de Seguridad y Restauración (Especial Formateo de PC)
+
+El sistema incluye herramientas autónomas para respaldar y restaurar la base de datos sin comandos complejos:
+
+1. **`Backup_ApexOS.bat`**: Ejecuta una copia completa de MySQL 8.0 y actualiza `database_backup.sql`.
+2. **`database_backup.sql`**: Archivo de respaldo íntegro subido a tu repositorio GitHub con toda tu información real (dinero en caja, ahorro blindado intocable, rutinas, metas, etc.).
+3. **`Restaurar_Backup.bat` (Al formatear tu PC)**:
+   - Tras instalar Windows, Node.js y MySQL Server 8.0:
+   - Clonas el repositorio: `git clone https://github.com/BryShdw/Apex-Os.git`
+   - Ejecutas `npm install`.
+   - Creas tu `.env` con la clave de Gemini.
+   - Haces doble clic en **`Restaurar_Backup.bat`**. En 5 segundos se recreará la base de datos `apex_personal_os` y se poblarán todos tus datos históricos exactamente como los dejaste.
+
+---
+
 *¡Apex OS está listo para acompañarte en tu disciplina diaria, blindar tu patrimonio y acelerar tu maestría en el dibujo y la calistenia!*

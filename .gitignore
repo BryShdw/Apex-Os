@@ -35,8 +35,10 @@ yarn-error.log*
 !.env.example
 
 # database backups & personal dumps
-/backups/
+/backups/*
+!backups/backup_latest.sql
 *.sql
+!database_backup.sql
 
 # logs & agent internal artifacts
 /logs/
