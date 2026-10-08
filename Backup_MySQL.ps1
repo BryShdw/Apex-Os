@@ -22,24 +22,14 @@ if (-not (Test-Path $dumpExe)) {
     exit
 }
 
-Write-Host "[*] Exportando base de datos 'apex_personal_os'..." -ForegroundColor Yellow
+Write-Host "[*] Exportando base de datos 'apex_personal_os' con juego de caracteres UTF-8 completo..." -ForegroundColor Yellow
 
-$psi = New-Object System.Diagnostics.ProcessStartInfo
-$psi.FileName = $dumpExe
-$psi.Arguments = "-u root -proot apex_personal_os"
-$psi.RedirectStandardOutput = $true
-$psi.UseShellExecute = $false
-$psi.CreateNoWindow = $true
-
-$process = [System.Diagnostics.Process]::Start($psi)
-$output = $process.StandardOutput.ReadToEnd()
-$process.WaitForExit()
-
-[System.IO.File]::WriteAllText($backupFile, $output, [System.Text.Encoding]::UTF8)
+# Ejecución directa con --result-file para evitar cualquier truncamiento de codificación OEM de Windows
+& $dumpExe -u root -proot --default-character-set=utf8mb4 apex_personal_os "--result-file=$backupFile" 2>$null
 
 # Mantener copia fija para control de versiones y restauración post-formateo
 $rootBackup = "$PSScriptRoot\database_backup.sql"
-[System.IO.File]::WriteAllText($rootBackup, $output, [System.Text.Encoding]::UTF8)
+Copy-Item -Path $backupFile -Destination $rootBackup -Force
 
 if (Test-Path $backupFile) {
     $size = (Get-Item $backupFile).Length / 1KB

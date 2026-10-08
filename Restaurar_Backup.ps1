@@ -41,35 +41,20 @@ Write-Host "[*] Creando base de datos 'apex_personal_os' si no existe..." -Foreg
 
 Write-Host "[*] Restaurando tablas, perfiles, transacciones y configuraciones..." -ForegroundColor Yellow
 
-$psi = New-Object System.Diagnostics.ProcessStartInfo
-$psi.FileName = $mysqlExe
-$psi.Arguments = "-u root -proot apex_personal_os"
-$psi.RedirectStandardInput = $true
-$psi.RedirectStandardOutput = $true
-$psi.RedirectStandardError = $true
-$psi.UseShellExecute = $false
-$psi.CreateNoWindow = $true
-
-$process = [System.Diagnostics.Process]::Start($psi)
-$content = [System.IO.File]::ReadAllText($backupFile, [System.Text.Encoding]::UTF8)
-$process.StandardInput.Write($content)
-$process.StandardInput.Close()
-
-$stderr = $process.StandardError.ReadToEnd()
-$process.WaitForExit()
+Push-Location $PSScriptRoot
+cmd.exe /c "`"$mysqlExe`" -u root -proot --default-character-set=utf8mb4 apex_personal_os < database_backup.sql" 2>$null
+$exitCode = $LASTEXITCODE
+Pop-Location
 
 Write-Host ""
-if ($process.ExitCode -eq 0) {
+if ($exitCode -eq 0) {
     Write-Host "=====================================================================" -ForegroundColor Green
     Write-Host "      [EXITO] BASE DE DATOS RESTAURADA COMPLETAMENTE AL 100%         " -ForegroundColor Green
     Write-Host "=====================================================================" -ForegroundColor Green
     Write-Host "Todos tus datos de dinero en caja, ahorro blindado, rutinas de       " -ForegroundColor White
     Write-Host "calistenia, metas y registros historicos han sido restablecidos.     " -ForegroundColor White
 } else {
-    Write-Host "[ADVERTENCIA] El proceso finalizo con codigo $($process.ExitCode)." -ForegroundColor Yellow
-    if ($stderr) {
-        Write-Host "Detalle: $stderr" -ForegroundColor DarkGray
-    }
+    Write-Host "[ADVERTENCIA] Hubo un problema al restaurar (Codigo $exitCode)." -ForegroundColor Yellow
 }
 
 Write-Host ""
